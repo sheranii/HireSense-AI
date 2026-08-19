@@ -1,6 +1,8 @@
 package com.sherani.hiresense.controller;
 
 import com.sherani.hiresense.dto.AuthResponseDto;
+import com.sherani.hiresense.dto.LoginRequestDto;
+import com.sherani.hiresense.dto.LoginResponseDto;
 import com.sherani.hiresense.dto.RegisterRequestDto;
 import com.sherani.hiresense.service.UserService;
 import jakarta.validation.Valid;
@@ -24,5 +26,14 @@ public class AuthController {
             return ResponseEntity.ok(response);
         }
         return ResponseEntity.badRequest().body(response);
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<LoginResponseDto> login(@Valid @RequestBody LoginRequestDto request) {
+        LoginResponseDto response = userService.loginUser(request);
+        if (response.isSuccess()) {
+            return ResponseEntity.ok(response);
+        }
+        return ResponseEntity.status(401).body(response);
     }
 }
