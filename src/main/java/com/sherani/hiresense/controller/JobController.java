@@ -51,4 +51,28 @@ public class JobController {
     public ResponseEntity<JobResponseDto> getJobById(@PathVariable Long id) {
         return ResponseEntity.ok(jobService.getJobById(id));
     }
+
+    // PUT /api/jobs/{id} — requires auth
+    @PutMapping("/{id}")
+    public ResponseEntity<JobResponseDto> updateJob(
+            @PathVariable Long id,
+            @RequestHeader("Authorization") String authHeader,
+            @Valid @RequestBody JobRequestDto request) {
+        
+        String token = authHeader.substring(7); // Strip "Bearer "
+        String email = jwtService.extractEmail(token);
+        return ResponseEntity.ok(jobService.updateJob(id, request, email));
+    }
+
+    // DELETE /api/jobs/{id} — requires auth
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deleteJob(
+            @PathVariable Long id,
+            @RequestHeader("Authorization") String authHeader) {
+        
+        String token = authHeader.substring(7); // Strip "Bearer "
+        String email = jwtService.extractEmail(token);
+        jobService.deleteJob(id, email);
+        return ResponseEntity.ok("Job deleted successfully");
+    }
 }

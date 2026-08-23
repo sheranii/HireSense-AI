@@ -60,6 +60,34 @@ public class JobService {
         return mapToResponse(job);
     }
 
+    public JobResponseDto updateJob(Long id, JobRequestDto request, String email) {
+        Job job = jobRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Job not found with id: " + id));
+        if (job.getPostedBy() == null || !job.getPostedBy().getEmail().equals(email)) {
+            throw new RuntimeException("Not authorized to update this job");
+        }
+
+        job.setTitle(request.getTitle());
+        job.setDescription(request.getDescription());
+        job.setLocation(request.getLocation());
+        job.setJobType(request.getJobType());
+        job.setSalary(request.getSalary());
+        job.setCompany(request.getCompany());
+
+        Job updatedJob = jobRepository.save(job);
+        return mapToResponse(updatedJob);
+    }
+
+    public void deleteJob(Long id, String email) {
+        Job job = jobRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Job not found with id: " + id));
+        if (job.getPostedBy() == null || !job.getPostedBy().getEmail().equals(email)) {
+            throw new RuntimeException("Not authorized to delete this job");
+        }
+        job.setActive(false);
+        jobRepository.save(job);
+    }
+
     private JobResponseDto mapToResponse(Job job) {
         return JobResponseDto.builder()
                 .id(job.getId())
