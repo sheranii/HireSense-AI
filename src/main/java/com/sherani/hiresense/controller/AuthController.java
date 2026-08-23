@@ -4,6 +4,7 @@ import com.sherani.hiresense.dto.AuthResponseDto;
 import com.sherani.hiresense.dto.LoginRequestDto;
 import com.sherani.hiresense.dto.LoginResponseDto;
 import com.sherani.hiresense.dto.RegisterRequestDto;
+import com.sherani.hiresense.security.JwtService;
 import com.sherani.hiresense.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -14,9 +15,11 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
 
     private final UserService userService;
+    private final JwtService jwtService;
 
-    public AuthController(UserService userService) {
+    public AuthController(UserService userService, JwtService jwtService) {
         this.userService = userService;
+        this.jwtService = jwtService;
     }
 
     @PostMapping("/register")
@@ -35,5 +38,12 @@ public class AuthController {
             return ResponseEntity.ok(response);
         }
         return ResponseEntity.status(401).body(response);
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity<String> getMe(@RequestHeader("Authorization") String authHeader) {
+        String token = authHeader.substring(7);
+        String email = jwtService.extractEmail(token);
+        return ResponseEntity.ok("Hello, " + email + "! You are authenticated.");
     }
 }
