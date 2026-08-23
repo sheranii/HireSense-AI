@@ -10,6 +10,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
@@ -35,8 +36,7 @@ public class SecurityConfig {
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/api/auth/**").permitAll()
-                .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/jobs/**").permitAll()
-                .requestMatchers(org.springframework.http.HttpMethod.POST, "/api/jobs/**").authenticated()
+                .requestMatchers(HttpMethod.GET, "/api/jobs/**").permitAll()
                 .anyRequest().authenticated()
             )
             .sessionManagement(session -> session
