@@ -48,4 +48,12 @@ public class ApplicationController {
         String email = extractEmail(authHeader);
         return ResponseEntity.ok(applicationService.getJobApplications(jobId, email));
     }
+    @PatchMapping("/{id}/status")
+    public ResponseEntity<ApplicationResponseDto> updateStatus(
+            @PathVariable Long id,
+            @RequestParam String status,
+            @RequestHeader("Authorization") String authHeader) {
+        String email = extractEmail(authHeader);
+        return ResponseEntity.ok(applicationService.updateApplicationStatus(id, status, email));
+    }
 }

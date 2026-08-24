@@ -63,6 +63,26 @@ public class ApplicationService {
                 .collect(Collectors.toList());
     }
 
+    public ApplicationResponseDto updateApplicationStatus(Long applicationId, String status, String email) {
+        Application application = applicationRepository.findById(applicationId)
+                .orElseThrow(() -> new RuntimeException("Application not found"));
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        if (!application.getJob().getPostedBy().getEmail().equals(email)) {
+            throw new RuntimeException("Not authorized to update this application");
+        }
+
+        if (!"ACCEPTED".equals(status) && !"REJECTED".equals(status)) {
+            throw new RuntimeException("Invalid status. Use ACCEPTED or REJECTED");
+        }
+
+        application.setStatus(status);
+        Application savedApplication = applicationRepository.save(application);
+        return mapToResponse(savedApplication);
+    }
+
     private ApplicationResponseDto mapToResponse(Application application) {
         return ApplicationResponseDto.builder()
                 .id(application.getId())

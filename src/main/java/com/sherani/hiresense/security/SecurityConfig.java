@@ -37,7 +37,13 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/api/auth/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/jobs/**").permitAll()
-                .requestMatchers("/api/applications/**").authenticated()
+                .requestMatchers(HttpMethod.POST, "/api/jobs/**").hasAnyAuthority("ROLE_RECRUITER", "ROLE_ADMIN")
+                .requestMatchers(HttpMethod.PUT, "/api/jobs/**").hasAnyAuthority("ROLE_RECRUITER", "ROLE_ADMIN")
+                .requestMatchers(HttpMethod.DELETE, "/api/jobs/**").hasAnyAuthority("ROLE_RECRUITER", "ROLE_ADMIN")
+                .requestMatchers(HttpMethod.POST, "/api/applications/**").hasAuthority("ROLE_JOB_SEEKER")
+                .requestMatchers(HttpMethod.GET, "/api/applications/my").hasAuthority("ROLE_JOB_SEEKER")
+                .requestMatchers(HttpMethod.GET, "/api/applications/job/**").hasAnyAuthority("ROLE_RECRUITER", "ROLE_ADMIN")
+                .requestMatchers(HttpMethod.PATCH, "/api/applications/**").hasAnyAuthority("ROLE_RECRUITER", "ROLE_ADMIN")
                 .anyRequest().authenticated()
             )
             .sessionManagement(session -> session
