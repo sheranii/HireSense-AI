@@ -19,11 +19,16 @@ public class ApplicationService {
     private final ApplicationRepository applicationRepository;
     private final UserRepository userRepository;
     private final JobRepository jobRepository;
+    private final EmailService emailService;
 
-    public ApplicationService(ApplicationRepository applicationRepository, UserRepository userRepository, JobRepository jobRepository) {
+    public ApplicationService(ApplicationRepository applicationRepository,
+                              UserRepository userRepository,
+                              JobRepository jobRepository,
+                              EmailService emailService) {
         this.applicationRepository = applicationRepository;
         this.userRepository = userRepository;
         this.jobRepository = jobRepository;
+        this.emailService = emailService;
     }
 
     public ApplicationResponseDto applyToJob(Long jobId, String email, ApplicationRequestDto request) {
@@ -44,6 +49,18 @@ public class ApplicationService {
                 .build();
 
         Application savedApplication = applicationRepository.save(application);
+
+        try {
+            emailService.sendApplicationConfirmation(
+                    user.getEmail(),
+                    user.getName(),
+                    job.getTitle(),
+                    job.getCompany()
+            );
+        } catch (Exception ignored) {
+            // Email failure must not break the API
+        }
+
         return mapToResponse(savedApplication);
     }
 
@@ -80,6 +97,18 @@ public class ApplicationService {
 
         application.setStatus(status);
         Application savedApplication = applicationRepository.save(application);
+
+        try {
+            emailService.sendStatusUpdateEmail(
+                    application.getApplicant().getEmail(),
+                    application.getApplicant().getName(),
+                    application.getJob().getTitle(),
+                    status
+            );
+        } catch (Exception ignored) {
+            // Email failure must not break the API
+        }
+
         return mapToResponse(savedApplication);
     }
 
