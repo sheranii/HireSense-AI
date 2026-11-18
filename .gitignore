@@ -1,0 +1,34 @@
+# Operating System Files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE & Editor Files
+.idea/
+.vscode/
+*.iml
+*.iws
+*.ipr
+.project
+.classpath
+.settings/
+
+# Portable Database & Binaries
+pgsql/
+
+# Backend Build & Runtime
+backend/target/
+*.log
+backend/*.log
+
+# Frontend Build & Dependencies
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+frontend/build-error.txt
+*.local
+
+# Environment variables
+.env
+.env.local
+.env.*.local
