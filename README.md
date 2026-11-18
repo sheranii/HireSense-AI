@@ -1,4 +1,4 @@
-# HireSense AI — Explainable Recruitment & Talent Management Platform
+# HireSense AI — Recruitment & Talent Management Platform
 
 **A full-stack recruitment platform designed to make hiring workflows more structured, transparent, and data-driven.**
 
